@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlParser.Cli", "XmlParser.Cli\XmlParser.Cli.csproj", "{8CF1790F-ADF0-4FAC-90A7-7E073AC0E4E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlParser.Core", "XmlParser.Core\XmlParser.Core.csproj", "{6961F32E-AE62-441E-9A9F-21E036536310}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CF1790F-ADF0-4FAC-90A7-7E073AC0E4E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CF1790F-ADF0-4FAC-90A7-7E073AC0E4E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF1790F-ADF0-4FAC-90A7-7E073AC0E4E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF1790F-ADF0-4FAC-90A7-7E073AC0E4E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6961F32E-AE62-441E-9A9F-21E036536310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6961F32E-AE62-441E-9A9F-21E036536310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6961F32E-AE62-441E-9A9F-21E036536310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6961F32E-AE62-441E-9A9F-21E036536310}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
