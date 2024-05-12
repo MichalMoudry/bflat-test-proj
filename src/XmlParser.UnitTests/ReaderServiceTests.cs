@@ -6,7 +6,6 @@ namespace XmlParser.UnitTests;
 public sealed class ReaderServiceTests
 {
     [Test]
-    [Ignore("usable for local development only")]
     public void TestReadFromFilePath()
     {
         var (result, err) = ReaderService.ParseWorkbook<TestData>(
