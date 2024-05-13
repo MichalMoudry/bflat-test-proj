@@ -1,4 +1,5 @@
 using XmlParser.Core;
+using XmlParser.Core.Attributes;
 
 namespace XmlParser.UnitTests;
 
@@ -8,24 +9,30 @@ public sealed class ReaderServiceTests
     [Test]
     public void TestReadFromFilePath()
     {
-        var (result, err) = ReaderService.ParseWorkbook<TestData>(
+        var result = ReaderService.ParseWorkbook<TestData>(
             @""
         );
 
         Assert.Multiple(() =>
         {
-            Assert.That(err, Is.Null);
-            Assert.That(result, Is.Not.Empty);
+            Assert.That(result.Error, Is.Null);
+            Assert.That(result.Data, Is.Not.Empty);
         });
     }
 
     private sealed class TestData
     {
+        [ColumnName("Country")]
         public string? Country { get; init; }
+        [ColumnName("Year")]
         public int Year { get; init; }
-        public long Pop { get; init; }
+        [ColumnName("Pop")]
+        public long Population { get; init; }
+        [ColumnName("Continent")]
         public string? Continent { get; init; }
-        public double LifeExp { get; init; }
-        public float GdpPercap { get; init; }
+        [ColumnName("LifeExp")]
+        public double LifeExpectancy { get; init; }
+        [ColumnName("GdpPercap")]
+        public float GdpPerCapita { get; init; }
     }
 }
