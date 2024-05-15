@@ -10,7 +10,7 @@ public sealed class ReaderServiceTests
     public void TestReadFromFilePath()
     {
         var result = ReaderService.ParseWorkbook<TestData>(
-            @""
+            string.Empty
         );
 
         Assert.Multiple(() =>
@@ -18,6 +18,14 @@ public sealed class ReaderServiceTests
             Assert.That(result.Error, Is.Null);
             Assert.That(result.Data, Is.Not.Empty);
         });
+    }
+
+    [Test]
+    public void TestReadFromEmptyFile()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            ReaderService.ParseWorkbook<TestData>(string.Empty)
+        );
     }
 
     private sealed class TestData

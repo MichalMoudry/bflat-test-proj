@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using ClosedXML.Excel;
 using XmlParser.Core.Attributes;
 using XmlParser.Core.Errors;
@@ -39,9 +40,68 @@ public sealed class ReaderService
         for (var i = 2; i < numberOfDataRows + 2; i++)
         {
             var obj = new T();
+            var cells = worksheet
+                .Row(i)
+                .CellsUsed()
+                .Take(columnNames.Length)
+                .Select((c, v) => new Cell(
+                    MatchIndexToColumnName(v, columnNames!),
+                    MatchExcelTypeToDotnet(c.DataType),
+                    c.CachedValue.ToString(CultureInfo.InvariantCulture)
+                ));
+            foreach (var cell in cells)
+            {
+                var setPropResult = TrySetProperty(
+                    obj,
+                    cell.ColumnName,
+                    Convert.ChangeType(cell.Value, cell.DataType, CultureInfo.InvariantCulture)
+                );
+                if (!setPropResult)
+                {
+                    return new ParsingResult<T>(
+                        Array.Empty<T>(),
+                        string.Format(null, Errs.InvalidCell, cell.Value, cell.ColumnName)
+                    );
+                }
+            }
             res.Add(obj);
         }
         return new ParsingResult<T>(res);
+    }
+
+    /// <summary>
+    /// A structure representing a singular cell in a Excel file.
+    /// </summary>
+    private readonly record struct Cell(
+        string ColumnName,
+        Type DataType,
+        string Value
+    );
+
+    private static string MatchIndexToColumnName(int index, string[] columnNames) =>
+        index >= 0 && index < columnNames.Length
+            ? columnNames[index]
+            : throw new ArgumentOutOfRangeException(nameof(index));
+
+    /// <summary>
+    /// Method for matching an Excel type to a corresponding .NET type.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when there is an attempt to match currently unsupported Excel data type.
+    /// </exception>
+    private static Type MatchExcelTypeToDotnet(XLDataType sourceType)
+    {
+        return sourceType switch
+        {
+            XLDataType.Text => typeof(string),
+            XLDataType.Number => typeof(int),
+            XLDataType.Boolean => typeof(bool),
+            XLDataType.DateTime => typeof(DateTime),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(sourceType),
+                $"{sourceType} is not currently supported"
+            )
+        };
     }
 
     private static bool TrySetProperty(object obj, string property, object value)
