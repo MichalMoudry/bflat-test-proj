@@ -62,6 +62,16 @@ namespace XmlParser.UnitTests.TestData {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] SimpleLongExcel {
+            get {
+                object obj = ResourceManager.GetObject("SimpleLongExcel", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] SimpleShortExcel {
             get {
                 object obj = ResourceManager.GetObject("SimpleShortExcel", resourceCulture);

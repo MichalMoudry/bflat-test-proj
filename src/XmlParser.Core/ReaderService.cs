@@ -7,9 +7,12 @@ using XmlParser.Core.Model;
 
 namespace XmlParser.Core;
 
+/// <summary>
+/// A service class with methods for reading contents of Excel files.
+/// </summary>
 public sealed class ReaderService
 {
-    public static ParsingResult<T> ParseWorkbook<T>(MemoryStream file) where T : new()
+    public ParsingResult<T> ParseWorkbook<T>(MemoryStream file) where T : new()
     {
         if (file.Length == 0)
         {
@@ -65,7 +68,7 @@ public sealed class ReaderService
         return new ParsingResult<T>(res);
     }
 
-    public static ParsingResult<T> ParseWorkbook<T>(string filePath) where T : new()
+    public ParsingResult<T> ParseWorkbook<T>(string filePath) where T : new()
     {
         ArgumentException.ThrowIfNullOrEmpty(filePath);
         var columnNames = GetColumnNames(typeof(T));
