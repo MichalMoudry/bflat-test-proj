@@ -1,4 +1,6 @@
-﻿namespace XmlParser.Core.Model;
+﻿using System.Globalization;
+
+namespace XmlParser.Core.Model;
 
 /// <summary>
 /// A structure representing a singular cell in a Excel file.
@@ -7,4 +9,11 @@ internal readonly record struct Cell(
     string? ColumnName,
     Type DataType,
     string Value
-);
+)
+{
+    public object GetValue() => Convert.ChangeType(
+        Value,
+        DataType,
+        CultureInfo.InvariantCulture
+    );
+}

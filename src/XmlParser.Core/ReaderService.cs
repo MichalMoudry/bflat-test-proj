@@ -1,18 +1,18 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using ClosedXML.Excel;
+using XmlParser.Core.Api;
 using XmlParser.Core.Attributes;
 using XmlParser.Core.Errors;
 using XmlParser.Core.Model;
 
 namespace XmlParser.Core;
 
-/// <summary>
-/// A service class with methods for reading contents of Excel files.
-/// </summary>
-public sealed class ReaderService
+/// <inheritdoc/>
+public sealed class ReaderService : IReaderService
 {
-    public ParsingResult<T> ParseWorkbook<T>(MemoryStream file) where T : new()
+    /// <inheritdoc/>
+    public ParsingResult<T> ParseWorkbook<T>(Stream file) where T : new()
     {
         if (file.Length == 0)
         {
@@ -39,22 +39,9 @@ public sealed class ReaderService
         for (var i = 2; i < numberOfDataRows + 2; i++)
         {
             var obj = new T();
-            var cells = worksheet
-                .Row(i)
-                .CellsUsed()
-                .Take(columnNames.Count)
-                .Select((c, v) => new Cell(
-                    MatchIndexToPropertyName(v, columnNames),
-                    MatchExcelTypeToDotnet(c.DataType),
-                    c.CachedValue.ToString(CultureInfo.InvariantCulture)
-                ));
-            foreach (var cell in cells)
+            foreach (var cell in GetCells(worksheet.Row(i), columnNames))
             {
-                var setPropResult = TrySetProperty(
-                    obj,
-                    cell.ColumnName,
-                    Convert.ChangeType(cell.Value, cell.DataType, CultureInfo.InvariantCulture)
-                );
+                var setPropResult = TrySetProperty(obj, in cell);
                 if (!setPropResult)
                 {
                     return new ParsingResult<T>(
@@ -91,6 +78,9 @@ public sealed class ReaderService
         return new ParsingResult<T>(res);
     }
 
+    /// <summary>
+    /// Method for obtaining a dictionary of pairs between a property name and its column name attribute value.
+    /// </summary>
     private static Dictionary<string, string> GetColumnNames(Type type) => type
         .GetProperties()
         .Select(i => new PropertyDetail(
@@ -106,6 +96,17 @@ public sealed class ReaderService
     ) => cells
         .Select(i => i.CachedValue.GetText().ToLowerInvariant())
         .SequenceEqual(structureInfo.Select(i => i.Value.ToLowerInvariant()));
+
+    private static IEnumerable<Cell> GetCells(
+        IXLRangeBase row,
+        Dictionary<string, string> columnNames
+    ) => row.CellsUsed()
+        .Take(columnNames.Count)
+        .Select((c, v) => new Cell(
+            MatchIndexToPropertyName(v, columnNames),
+            MatchExcelTypeToDotnet(c.DataType),
+            c.CachedValue.ToString(CultureInfo.InvariantCulture)
+        ));
 
     /// <summary>
     /// Method for matching a numerical index to type's property name.
@@ -126,29 +127,26 @@ public sealed class ReaderService
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when there is an attempt to match currently unsupported Excel data type.
     /// </exception>
-    private static Type MatchExcelTypeToDotnet(XLDataType sourceType)
+    private static Type MatchExcelTypeToDotnet(XLDataType sourceType) => sourceType switch
     {
-        return sourceType switch
-        {
-            XLDataType.Text => typeof(string),
-            XLDataType.Number => typeof(int),
-            XLDataType.Boolean => typeof(bool),
-            XLDataType.DateTime => typeof(DateTime),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(sourceType),
-                $"{sourceType} is not currently supported"
-            )
-        };
-    }
+        XLDataType.Text => typeof(string),
+        XLDataType.Number => typeof(int),
+        XLDataType.Boolean => typeof(bool),
+        XLDataType.DateTime => typeof(DateTime),
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(sourceType),
+            $"{sourceType} is not currently supported"
+        )
+    };
 
-    private static bool TrySetProperty(object obj, string? property, object value)
+    private static bool TrySetProperty(object obj, ref readonly Cell cell)
     {
-        ArgumentNullException.ThrowIfNull(property);
+        ArgumentNullException.ThrowIfNull(cell.ColumnName);
         var prop = obj
             .GetType()
-            .GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
+            .GetProperty(cell.ColumnName, BindingFlags.Public | BindingFlags.Instance);
         if (prop == null || !prop.CanWrite) return false;
-        prop.SetValue(obj, value, null);
+        prop.SetValue(obj, cell.GetValue(), null);
         return true;
     }
 }
