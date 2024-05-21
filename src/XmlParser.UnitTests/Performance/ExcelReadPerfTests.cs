@@ -8,7 +8,8 @@ namespace XmlParser.UnitTests.Performance;
 /// <summary>
 /// Tests covering performance of a <see cref="ReaderService"/> class.
 /// </summary>
-public sealed class ExcelReadPerfTests
+[MemoryDiagnoser]
+public class ExcelReadPerfTests
 {
     private ReaderService? _readerService;
 
