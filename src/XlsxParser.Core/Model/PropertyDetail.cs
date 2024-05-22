@@ -1,4 +1,4 @@
-﻿namespace XmlParser.Core.Model;
+﻿namespace XlsxParser.Core.Model;
 
 /// <summary>
 /// A record encapsulating relevant property information for file processing.

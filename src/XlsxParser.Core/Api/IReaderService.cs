@@ -1,6 +1,6 @@
-﻿using XmlParser.Core.Model;
+﻿using XlsxParser.Core.Model;
 
-namespace XmlParser.Core.Api;
+namespace XlsxParser.Core.Api;
 
 /// <summary>
 /// A service class with methods for reading contents of Excel files.

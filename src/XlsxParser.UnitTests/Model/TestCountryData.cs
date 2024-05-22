@@ -1,6 +1,6 @@
-﻿using XmlParser.Core.Attributes;
+﻿using XlsxParser.Core.Attributes;
 
-namespace XmlParser.UnitTests.Model;
+namespace XlsxParser.UnitTests.Model;
 
 internal sealed class TestCountryData : IEquatable<TestCountryData>
 {

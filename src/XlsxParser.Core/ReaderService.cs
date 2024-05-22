@@ -1,12 +1,12 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using ClosedXML.Excel;
-using XmlParser.Core.Api;
-using XmlParser.Core.Attributes;
-using XmlParser.Core.Errors;
-using XmlParser.Core.Model;
+using XlsxParser.Core.Api;
+using XlsxParser.Core.Attributes;
+using XlsxParser.Core.Errors;
+using XlsxParser.Core.Model;
 
-namespace XmlParser.Core;
+namespace XlsxParser.Core;
 
 /// <inheritdoc/>
 public sealed class ReaderService : IReaderService

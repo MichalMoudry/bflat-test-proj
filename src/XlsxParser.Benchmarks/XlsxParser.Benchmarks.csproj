@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\XmlParser.UnitTests\XmlParser.UnitTests.csproj" />
+      <ProjectReference Include="..\XlsxParser.UnitTests\XlsxParser.UnitTests.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace XmlParser.Core.Model;
+namespace XlsxParser.Core.Model;
 
 /// <summary>
 /// A structure representing a singular cell in a Excel file.

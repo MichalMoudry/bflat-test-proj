@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace XmlParser.Core.Errors;
+namespace XlsxParser.Core.Errors;
 
 /// <summary>
 /// A class containing constants for errors related to parsing or other functionality.

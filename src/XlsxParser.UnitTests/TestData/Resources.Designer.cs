@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace XmlParser.UnitTests.TestData {
+namespace XlsxParser.UnitTests.TestData {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace XmlParser.UnitTests.TestData {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("XmlParser.UnitTests.TestData.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("XlsxParser.UnitTests.TestData.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

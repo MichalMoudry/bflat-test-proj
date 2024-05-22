@@ -1,8 +1,8 @@
-using XmlParser.Core;
-using XmlParser.UnitTests.Model;
-using XmlParser.UnitTests.TestData;
+using XlsxParser.UnitTests.Model;
+using XlsxParser.UnitTests.TestData;
+using XlsxParser.Core;
 
-namespace XmlParser.UnitTests;
+namespace XlsxParser.UnitTests;
 
 [TestFixture]
 public sealed class ReaderServiceTests

@@ -1,4 +1,4 @@
-﻿namespace XmlParser.Core.Attributes;
+﻿namespace XlsxParser.Core.Attributes;
 
 /// <summary>
 /// An attribute for assigning class properties to Excel column.

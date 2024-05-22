@@ -1,9 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
-using XmlParser.Core;
-using XmlParser.UnitTests.Model;
-using XmlParser.UnitTests.TestData;
+using XlsxParser.UnitTests.Model;
+using XlsxParser.UnitTests.TestData;
+using XlsxParser.Core;
 
-namespace XmlParser.UnitTests.Performance;
+namespace XlsxParser.UnitTests.Performance;
 
 /// <summary>
 /// Tests covering performance of a <see cref="ReaderService"/> class.
