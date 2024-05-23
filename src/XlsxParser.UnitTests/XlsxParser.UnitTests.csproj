@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\XlsxParser.Core.FSharp\XlsxParser.Core.FSharp.fsproj" />
       <ProjectReference Include="..\XlsxParser.Core\XlsxParser.Core.csproj" />
     </ItemGroup>
 

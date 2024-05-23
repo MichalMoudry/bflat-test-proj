@@ -1,3 +1,4 @@
+using FSharp.Interop.Excel;
 using XlsxParser.UnitTests.Model;
 using XlsxParser.UnitTests.TestData;
 using XlsxParser.Core;
@@ -8,21 +9,6 @@ namespace XlsxParser.UnitTests;
 public sealed class ReaderServiceTests
 {
     private readonly ReaderService _readerService = new();
-
-    [Test]
-    [Ignore("For local development")]
-    public void TestReadFromFilePath()
-    {
-        var result = _readerService.ParseWorkbook<TestCountryData>(
-            string.Empty
-        );
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Error, Is.Null);
-            Assert.That(result.Data, Is.Not.Empty);
-        });
-    }
 
     [Test]
     public void TestReadFromMemoryStream()
@@ -70,5 +56,16 @@ public sealed class ReaderServiceTests
             Assert.That(res.Data, Is.Empty);
             Assert.That(res.Error, Is.EqualTo("File or stream is empty"));
         });
+    }
+
+    [Test]
+    public void TestFSharpReaderService()
+    {
+        var readerService = new XlsxParser.Core.FSharp.ReaderService();
+        var res = readerService.ParseWorkbook<TestCountryData>(
+            new MemoryStream(Resources.SimpleShortExcel),
+            ExcelFormat.Xlsx,
+            "List1"
+        );
     }
 }

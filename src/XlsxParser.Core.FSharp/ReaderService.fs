@@ -13,15 +13,26 @@ type ReaderService() =
     let GetColumnNames(evalType : Type) =
         evalType
             .GetProperties()
-            .Select(fun i -> { Name = i.Name; ColumnName = i.GetCustomAttribute<ColumnNameAttribute>().Name })
-            .Where(fun i -> i.ColumnName <> String.Empty)
+            .Select(fun i -> PropertyDetail(i.Name, i.GetCustomAttribute<ColumnNameAttribute>()))
+            .Where(fun i -> i.ColumnName.IsSome)
             .ToDictionary(fun k -> k.Name)
 
     member this.ParseWorkbook<'T> (file: Stream) format sheetName =
-        if file.Length = 0 then
-            Seq.empty<'T>
-        else
-            let worksheet = ExcelProvider.ExcelFileInternal(file, format, sheetName, "", true)
-            let test = (worksheet.Data |> Seq.head).ToString()
-            printfn $"%s{test}"
-            Seq.empty<'T>
+        seq {
+            if file.Length = 0 then
+                ()
+            else
+                let columnNames = GetColumnNames(typeof<'T>)
+                if columnNames.Count = 0 then
+                    ()
+                else
+                    let worksheet = ExcelProvider.ExcelFileInternal(file, format, sheetName, "A1:F3", true)
+                    let numberOfRows = (worksheet.Data |> Seq.length) - 1
+                    for i in 0..numberOfRows do
+                        let rowData = worksheet.Data.ElementAt(i)
+                        yield! seq { { Cells = [||] } }
+                        (*for y in 0..columnNames.Count - 1 do
+                            let value = (rowData.GetValue y).ToString()
+                            printfn ""
+                        yield! seq { { Cells = [||] } }*)
+        }

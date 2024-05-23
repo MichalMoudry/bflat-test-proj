@@ -1,11 +1,14 @@
 ﻿namespace XlsxParser.Core.FSharp.Model
 
-open System
+open XlsxParser.Core.Attributes
 
 /// A record encapsulating relevant property information for file processing.
-type internal PropertyDetail = {
+type internal PropertyDetail(name : string, columnAttr : ColumnNameAttribute) =
     /// Name of the property.
-    Name : string
+    member this.Name with get() = name
     /// Name of a column in an Excel file that the property represents.
-    ColumnName : string
-}
+    member this.ColumnName with get() =
+        if columnAttr <> null then
+            Some(columnAttr.Name)
+        else
+            None

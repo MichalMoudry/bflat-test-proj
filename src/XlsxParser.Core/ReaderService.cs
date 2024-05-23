@@ -55,29 +55,6 @@ public sealed class ReaderService : IReaderService
         return new ParsingResult<T>(res);
     }
 
-    public ParsingResult<T> ParseWorkbook<T>(string filePath) where T : new()
-    {
-        ArgumentException.ThrowIfNullOrEmpty(filePath);
-        var columnNames = GetColumnNames(typeof(T));
-        if (columnNames.Count == 0)
-        {
-            return new ParsingResult<T>([], Errs.ZeroProperties);
-        }
-
-        using var workbook = new XLWorkbook(filePath);
-        var worksheet = workbook.Worksheets.First();
-        var numberOfDataRows = worksheet.RowsUsed().Count() - 1;
-        var res = new List<T>(numberOfDataRows);
-
-        // If the first row is not structurally equal to T properties, then early return.
-        if (!IsRowStructureValid(worksheet.Row(1).CellsUsed(), columnNames))
-        {
-            return new ParsingResult<T>([], Errs.InvalidFirstRow);
-        }
-
-        return new ParsingResult<T>(res);
-    }
-
     /// <summary>
     /// Method for obtaining a dictionary of pairs between a property name and its column name attribute value.
     /// </summary>

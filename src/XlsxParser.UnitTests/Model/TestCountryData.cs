@@ -17,6 +17,8 @@ internal sealed class TestCountryData : IEquatable<TestCountryData>
     [ColumnName("GdpPercap")]
     public string? GdpPerCapita { get; init; }
 
+    public double LifeExpectancyVal => double.Parse(LifeExpectancy!);
+
     public bool Equals(TestCountryData? other)
     {
         if (ReferenceEquals(null, other)) return false;
