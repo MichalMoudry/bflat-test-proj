@@ -1,19 +1,7 @@
-﻿using System.Globalization;
-
 namespace XlsxParser.Core.Model;
 
-/// <summary>
-/// A structure representing a singular cell in a Excel file.
-/// </summary>
-internal readonly record struct Cell(
-    string? ColumnName,
-    Type DataType,
-    string Value
-)
+public sealed class Cell
 {
-    public object GetValue() => Convert.ChangeType(
-        Value,
-        DataType,
-        CultureInfo.InvariantCulture
-    );
+    public string? Value { get; init; }
+    public Type? Typeof { get; init; }
 }

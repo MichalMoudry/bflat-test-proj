@@ -10,5 +10,5 @@ public interface IReaderService
     /// <summary>
     /// Method for parsing contents (Stream) of an Excel file into a collection of <typeparamref name="T"/>.
     /// </summary>
-    ParsingResult<T> ParseWorkbook<T>(Stream file) where T : new();
+    IEnumerable<Row> ParseWorkbook<T>(Stream file);
 }

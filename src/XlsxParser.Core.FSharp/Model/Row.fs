@@ -6,6 +6,6 @@ type Cell(value: obj) =
     member this.Value with get() = value
     member this.Typeof with get() = value.GetType()
 
-type Row = {
-    Cells: array<Cell>
-}
+[<Sealed>]
+type Row(cells: array<Cell>) =
+    member this.Cells with get() = cells

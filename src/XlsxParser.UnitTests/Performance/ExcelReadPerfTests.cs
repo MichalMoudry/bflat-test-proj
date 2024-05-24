@@ -13,9 +13,14 @@ namespace XlsxParser.UnitTests.Performance;
 public class ExcelReadPerfTests
 {
     private ReaderService? _readerService;
+    private XlsxParser.Core.FSharp.ReaderService? _fsReaderService;
 
     [GlobalSetup]
-    public void Setup() => _readerService = new ReaderService();
+    public void Setup()
+    {
+        _readerService = new ReaderService();
+        _fsReaderService = new Core.FSharp.ReaderService();
+    }
 
     [Benchmark]
     public void TestShortExcelRead()
@@ -23,10 +28,8 @@ public class ExcelReadPerfTests
         var res = _readerService!.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleShortExcel)
         );
-        foreach (var row in res.Data)
-        {
-            Console.WriteLine(row);
-        }
+        var amount = res.Count();
+        Console.WriteLine(amount);
     }
 
     [Benchmark]
@@ -35,25 +38,56 @@ public class ExcelReadPerfTests
         var res = _readerService!.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleLongExcel)
         );
-        foreach (var row in res.Data)
-        {
-            Console.WriteLine(row);
-        }
+        var amount = res.Count();
+        Console.WriteLine(amount);
+    }
+
+    [Benchmark]
+    public void TestLargeExcelSheetRead()
+    {
+        var res = _readerService!.ParseWorkbook<TestCountryData>(
+            new MemoryStream(Resources.SimpleLargeExcel)
+        );
+        var amount = res.Count();
+        Console.WriteLine(amount);
     }
 
     [Benchmark]
     public void TestShortExcelReadWithFsharp()
     {
-        var readerService = new XlsxParser.Core.FSharp.ReaderService();
-        var res = readerService.ParseWorkbook<TestCountryData>(
+        var res = _fsReaderService!.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleShortExcel),
             ExcelFormat.Xlsx,
             "List1",
-            "A1:F3"
+            string.Empty
         );
-        foreach (var row in res)
-        {
-            Console.WriteLine(row);
-        }
+        var amount = res.Count();
+        Console.WriteLine(amount);
+    }
+
+    [Benchmark]
+    public void TestLongExcelReadWithFsharp()
+    {
+        var res = _fsReaderService!.ParseWorkbook<TestCountryData>(
+            new MemoryStream(Resources.SimpleLongExcel),
+            ExcelFormat.Xlsx,
+            "List1",
+            string.Empty
+        );
+        var amount = res.Count();
+        Console.WriteLine(amount);
+    }
+
+    [Benchmark]
+    public void TestLargeExcelReadWithFsharp()
+    {
+        var res = _fsReaderService!.ParseWorkbook<TestCountryData>(
+            new MemoryStream(Resources.SimpleLargeExcel),
+            ExcelFormat.Xlsx,
+            "List1",
+            string.Empty
+        );
+        var amount = res.Count();
+        Console.WriteLine(amount);
     }
 }

@@ -13,9 +13,18 @@ public sealed class ReaderServiceTests
     [Test]
     public void TestReadFromMemoryStream()
     {
-        var result = _readerService.ParseWorkbook<TestCountryData>(
-            new MemoryStream(Resources.SimpleShortExcel)
-        );
+        var result = _readerService
+            .ParseWorkbook<TestCountryData>(new MemoryStream(Resources.SimpleShortExcel))
+            .Select(i => new TestCountryData
+            {
+                Country = i.Cells[0].Value,
+                Year = Convert.ToInt32(i.Cells[1].Value),
+                Population = Convert.ToInt64(i.Cells[2].Value),
+                Continent = i.Cells[3].Value,
+                LifeExpectancy = i.Cells[4].Value,
+                GdpPerCapita = i.Cells[5].Value
+            })
+            .ToArray();
         TestCountryData[] expected = [
             new TestCountryData
             {
@@ -36,12 +45,7 @@ public sealed class ReaderServiceTests
                 LifeExpectancy = "30.332"
             }
         ];
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Error, Is.Null);
-            Assert.That(result.Data, Is.EqualTo(expected));
-        });
+        Assert.That(result, Is.EquivalentTo(expected));
     }
 
     [Test]
@@ -51,11 +55,7 @@ public sealed class ReaderServiceTests
             new MemoryStream()
         );
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(res.Data, Is.Empty);
-            Assert.That(res.Error, Is.EqualTo("File or stream is empty"));
-        });
+        Assert.That(res, Is.Empty);
     }
 
     [Test]
@@ -66,7 +66,8 @@ public sealed class ReaderServiceTests
             new MemoryStream(Resources.SimpleShortExcel),
             ExcelFormat.Xlsx,
             "List1",
-            "A1:F3"
-        );
+            string.Empty
+        ).ToArray();
+        Console.WriteLine(res);
     }
 }

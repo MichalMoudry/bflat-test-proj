@@ -12,47 +12,41 @@ namespace XlsxParser.Core;
 public sealed class ReaderService : IReaderService
 {
     /// <inheritdoc/>
-    public ParsingResult<T> ParseWorkbook<T>(Stream file) where T : new()
+    public IEnumerable<Row> ParseWorkbook<T>(Stream file)
     {
         if (file.Length == 0)
         {
-            return new ParsingResult<T>([], Errs.EmptyFile);
+            yield break;
         }
         var columnNames = GetColumnNames(typeof(T));
         if (columnNames.Count == 0)
         {
-            return new ParsingResult<T>([], Errs.ZeroProperties);
+            yield break;
         }
 
         using var workbook = new XLWorkbook(file);
         var worksheet = workbook.Worksheets.First();
         var numberOfDataRows = worksheet.RowsUsed().Count() - 1;
-        var res = new List<T>(numberOfDataRows);
 
         // If the first row is not structurally equal to T properties, then early return.
         if (!IsRowStructureValid(worksheet.Row(1).CellsUsed(), columnNames))
         {
-            return new ParsingResult<T>([], Errs.InvalidFirstRow);
+            yield break;
         }
 
         // Adding 2 because index starts at 1 and header row is not evaluated
         for (var i = 2; i < numberOfDataRows + 2; i++)
         {
-            var obj = new T();
-            foreach (var cell in GetCells(worksheet.Row(i), columnNames))
-            {
-                var setPropResult = TrySetProperty(obj, in cell);
-                if (!setPropResult)
+            yield return new Row(worksheet
+                .Row(i)
+                .CellsUsed()
+                .Select(uc => new Cell
                 {
-                    return new ParsingResult<T>(
-                        [],
-                        string.Format(null, Errs.InvalidCell, cell.Value, cell.ColumnName)
-                    );
-                }
-            }
-            res.Add(obj);
+                    Value = uc.CachedValue.ToString(CultureInfo.InvariantCulture),
+                    Typeof = MatchExcelTypeToDotnet(uc.DataType)
+                })
+                .ToArray());
         }
-        return new ParsingResult<T>(res);
     }
 
     /// <summary>
@@ -73,17 +67,6 @@ public sealed class ReaderService : IReaderService
     ) => cells
         .Select(i => i.CachedValue.GetText().ToLowerInvariant())
         .SequenceEqual(structureInfo.Select(i => i.Value.ToLowerInvariant()));
-
-    private static IEnumerable<Cell> GetCells(
-        IXLRangeBase row,
-        Dictionary<string, string> columnNames
-    ) => row.CellsUsed()
-        .Take(columnNames.Count)
-        .Select((c, v) => new Cell(
-            MatchIndexToPropertyName(v, columnNames),
-            MatchExcelTypeToDotnet(c.DataType),
-            c.CachedValue.ToString(CultureInfo.InvariantCulture)
-        ));
 
     /// <summary>
     /// Method for matching a numerical index to type's property name.
@@ -115,15 +98,4 @@ public sealed class ReaderService : IReaderService
             $"{sourceType} is not currently supported"
         )
     };
-
-    private static bool TrySetProperty(object obj, ref readonly Cell cell)
-    {
-        ArgumentNullException.ThrowIfNull(cell.ColumnName);
-        var prop = obj
-            .GetType()
-            .GetProperty(cell.ColumnName, BindingFlags.Public | BindingFlags.Instance);
-        if (prop == null || !prop.CanWrite) return false;
-        prop.SetValue(obj, cell.GetValue(), null);
-        return true;
-    }
 }
