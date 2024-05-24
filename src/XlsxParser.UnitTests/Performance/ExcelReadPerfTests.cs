@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using FSharp.Interop.Excel;
 using XlsxParser.UnitTests.Model;
 using XlsxParser.UnitTests.TestData;
 using XlsxParser.Core;
@@ -19,16 +20,40 @@ public class ExcelReadPerfTests
     [Benchmark]
     public void TestShortExcelRead()
     {
-        _readerService!.ParseWorkbook<TestCountryData>(
+        var res = _readerService!.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleShortExcel)
         );
+        foreach (var row in res.Data)
+        {
+            Console.WriteLine(row);
+        }
     }
 
     [Benchmark]
     public void TestLongExcelSheetRead()
     {
-        _readerService!.ParseWorkbook<TestCountryData>(
+        var res = _readerService!.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleLongExcel)
         );
+        foreach (var row in res.Data)
+        {
+            Console.WriteLine(row);
+        }
+    }
+
+    [Benchmark]
+    public void TestShortExcelReadWithFsharp()
+    {
+        var readerService = new XlsxParser.Core.FSharp.ReaderService();
+        var res = readerService.ParseWorkbook<TestCountryData>(
+            new MemoryStream(Resources.SimpleShortExcel),
+            ExcelFormat.Xlsx,
+            "List1",
+            "A1:F3"
+        );
+        foreach (var row in res)
+        {
+            Console.WriteLine(row);
+        }
     }
 }

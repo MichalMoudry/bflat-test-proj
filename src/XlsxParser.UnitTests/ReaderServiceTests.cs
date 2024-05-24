@@ -65,7 +65,8 @@ public sealed class ReaderServiceTests
         var res = readerService.ParseWorkbook<TestCountryData>(
             new MemoryStream(Resources.SimpleShortExcel),
             ExcelFormat.Xlsx,
-            "List1"
+            "List1",
+            "A1:F3"
         );
     }
 }

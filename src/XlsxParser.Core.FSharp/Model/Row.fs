@@ -1,13 +1,10 @@
 namespace XlsxParser.Core.FSharp.Model
 
-open System
-
-/// A record representing a single cell in an Excel file.
-[<Struct>]
-type Cell = {
-    Value: obj
-    Typeof: Type
-}
+/// A class representing a single cell in an Excel file.
+[<Sealed>]
+type Cell(value: obj) =
+    member this.Value with get() = value
+    member this.Typeof with get() = value.GetType()
 
 type Row = {
     Cells: array<Cell>

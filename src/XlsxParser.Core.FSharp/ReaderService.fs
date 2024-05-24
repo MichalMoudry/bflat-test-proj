@@ -17,22 +17,18 @@ type ReaderService() =
             .Where(fun i -> i.ColumnName.IsSome)
             .ToDictionary(fun k -> k.Name)
 
-    member this.ParseWorkbook<'T> (file: Stream) format sheetName =
+    member this.ParseWorkbook<'T> (file: Stream) format sheetName range =
         seq {
-            if file.Length = 0 then
-                ()
+            if file.Length = 0 then ()
             else
-                let columnNames = GetColumnNames(typeof<'T>)
-                if columnNames.Count = 0 then
-                    ()
+                let columnNamesCount = GetColumnNames(typeof<'T>).Count - 1
+                if columnNamesCount <= 0 then ()
                 else
-                    let worksheet = ExcelProvider.ExcelFileInternal(file, format, sheetName, "A1:F3", true)
+                    let worksheet = ExcelProvider.ExcelFileInternal(file, format, sheetName, range, true)
                     let numberOfRows = (worksheet.Data |> Seq.length) - 1
                     for i in 0..numberOfRows do
                         let rowData = worksheet.Data.ElementAt(i)
-                        yield! seq { { Cells = [||] } }
-                        (*for y in 0..columnNames.Count - 1 do
-                            let value = (rowData.GetValue y).ToString()
-                            printfn ""
-                        yield! seq { { Cells = [||] } }*)
+                        yield! seq {
+                            { Cells = [| for y in 0..columnNamesCount -> Cell(rowData.GetValue y) |] }
+                        }
         }
