@@ -39,11 +39,13 @@ public sealed class ExcelExporter : IExcelExporter
             SheetId = 1,
             Name = sheetName
         });
-        var sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+        //var sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+        var sheetData = new SheetData();
 
         var typeMetadata = GetTypeMetadata(typeof(T));
         ConstructHeader(sheetData, typeMetadata);
 
+        worksheetPart.Worksheet.AppendChild(sheetData);
         workbookPart.Workbook.Save();
         return stream;
     }

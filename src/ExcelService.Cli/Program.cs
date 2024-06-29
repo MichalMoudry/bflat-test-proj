@@ -9,7 +9,7 @@ var data = Enumerable
     .Select(i => new TestClass());
 var stream = exporter.ExportData(data);
 
-await using var fileStream = File.Create("C:/Users/moudr/Downloads/test.xlsx");
+await using var fileStream = File.Create("");
 stream.Seek(0, SeekOrigin.Begin);
 await stream.CopyToAsync(fileStream);
 
